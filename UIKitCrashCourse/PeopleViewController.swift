@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 class PeopleViewController: UIViewController {
     
@@ -40,7 +41,11 @@ extension PeopleViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let item = viewModel.people[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PersonCollectionViewCell", for: indexPath) as! PersonCollectionViewCell
+        
+        cell.delegate = self
+        cell.item = item
         return cell
     }
 }
@@ -55,8 +60,21 @@ extension PeopleViewController: PeopleViewModelDelegate {
     }
 }
 
+extension PeopleViewController: PersonCollectionViewCellDelegate {
+    func didTapSubscribe() {
+        let url = URL(string: "https://bartminski.ga")!
+        let viewController = SFSafariViewController(url: url)
+        viewController.modalPresentationStyle = .formSheet
+        self.present(viewController, animated: true)
+    }
+}
+
 private extension PeopleViewController {
     func setup() {
+        
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.title = "People"
+        
         view.backgroundColor = .systemBackground
         
         view.addSubview(collectionView)
